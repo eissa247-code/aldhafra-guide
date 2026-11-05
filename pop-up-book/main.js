@@ -220,7 +220,15 @@ document.querySelector('[data-view=play]').textContent = t('جرّب', 'Play');
 document.title = t('كتاب الرياضيات المنبثق — النسب والمعدلات', 'Pop-up Math Book — Ratios and Rates');
 $('#loading').textContent = t('جاري فتح الكتاب…', 'Opening the book…');
 $('#langBtn').textContent = lang === 'en' ? 'عربي' : 'English';
-$('#langBtn').addEventListener('click', () => { location.href = `?lang=${lang === 'en' ? 'ar' : 'en'}#${LESSONS[cur]?.id || ''}`; });
+$('#langBtn').addEventListener('click', () => {
+  const next = lang === 'en' ? 'ar' : 'en';
+  try { localStorage.setItem('popup-book-lang', next); } catch { /* تجاهل */ }
+  const u = new URL(location.href);
+  if (u.searchParams.has('lang')) u.searchParams.set('lang', next);
+  u.hash = LESSONS[cur]?.id || '';
+  location.href = u.href;
+  location.reload();
+});
 $('#prev').addEventListener('click', () => goTo(cur - 1));
 $('#next').addEventListener('click', () => goTo(cur + 1));
 document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
