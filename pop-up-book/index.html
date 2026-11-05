@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>كتاب الرياضيات المنبثق — النسب والمعدلات</title>
+<meta name="description" content="كتاب رياضيات ثلاثي الأبعاد للصف السادس: مجسّمات تنبثق من الصفحة، توقّعات، ألسنة ورقية، وأختام إنجاز.">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">{ "imports": { "three": "./vendor/three.module.js" } }</script>
+</head>
+<body>
+<div id="app" aria-label="كتاب ثلاثي الأبعاد"></div>
+
+<div class="hud top">
+  <div class="brand">
+    <b id="modTitle"></b>
+    <span id="modQ"></span>
+  </div>
+  <div class="toprow">
+    <button id="tocBtn" class="pill" aria-haspopup="dialog">☰ الفهرس</button>
+    <button id="langBtn" class="pill">English</button>
+  </div>
+</div>
+
+<div class="hud views" role="group" aria-label="زاوية الرؤية">
+  <button data-view="all" class="pill on">الكتاب</button>
+  <button data-view="read" class="pill">اقرأ</button>
+  <button data-view="play" class="pill">جرّب</button>
+</div>
+
+<div class="hud nav">
+  <button id="prev" class="pill big" aria-label="الدرس السابق">◀ السابق</button>
+  <div class="dots" id="dots" role="tablist"></div>
+  <button id="next" class="pill big" aria-label="الدرس التالي">التالي ▶</button>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<div id="toc" class="toc" hidden>
+  <div class="toc-card" role="dialog" aria-label="فهرس الوحدة">
+    <h2 id="tocTitle"></h2>
+    <ol id="tocList"></ol>
+    <button id="tocClose" class="pill">إغلاق</button>
+  </div>
+</div>
+
+<div id="loading" class="loading">جاري فتح الكتاب…</div>
+<script type="module" src="main.js"></script>
+<noscript>يحتاج هذا الكتاب إلى تفعيل جافاسكربت.</noscript>
+</body>
+</html>
