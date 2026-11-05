@@ -1,10 +1,13 @@
 // main.js — يربط المحتوى (lessons.js) بالمجسّمات (models.js) والكتاب (book.js)
-import { LESSONS, MODULE } from './lessons.js';
+import * as AR from './lessons.js';
+import * as EN from './lessons.en.js';
+import { lang, t } from './i18n.js';
+const { LESSONS, MODULE } = lang === 'en' ? EN : AR;
 import { MODELS } from './models.js';
 import { BookScene } from './book.js';
 
 const $ = (s) => document.querySelector(s);
-const AR_LETTERS = ['أ', 'ب', 'ج'];
+const AR_LETTERS = t(['أ', 'ب', 'ج'], ['A', 'B', 'C']);
 const KEY = 'popup-book-ratios-v1';
 
 // ---------- التقدّم (يُحفظ في المتصفح إن أمكن) ----------
@@ -35,9 +38,9 @@ function pageHTML(L, i) {
   const picked = st.picked;
   const q = L.quiz;
   return `
-  <div class="pg-kicker">الدرس ${L.id} · الوحدة ${MODULE.num} — ${MODULE.title} · ص ${L.pages}</div>
+  <div class="pg-kicker">${t('الدرس','Lesson')} ${L.id} · ${t('الوحدة','Module')} ${MODULE.num} — ${MODULE.title} · ${t('ص','p.')} ${L.pages}</div>
   <h1 class="pg-title">${L.title}</h1>
-  <div class="pg-en">${L.en}</div>
+  ${lang === 'ar' ? `<div class="pg-en">${L.en}</div>` : ''}
   <p class="pg-concept">${L.concept}</p>
   <p class="pg-summary">${L.summary}</p>
   <section class="formula">
@@ -45,30 +48,30 @@ function pageHTML(L, i) {
     <div class="eq">${L.formula.html}</div>
     <div class="rows">${L.formula.rows.map((r) => `<span>${r}</span>`).join('')}</div>
   </section>
-  <section class="vocab"><h3>مفردات أساسية</h3>
-    <dl>${L.vocab.map(([ar, en, def]) => `<div><dt>${ar}<i>${en}</i></dt><dd>${def}</dd></div>`).join('')}</dl>
+  <section class="vocab"><h3>${t('مفردات أساسية','Key vocabulary')}</h3>
+    <dl>${L.vocab.map(([ar, en, def]) => `<div><dt>${ar}${en ? `<i>${en}</i>` : ''}</dt><dd>${def}</dd></div>`).join('')}</dl>
   </section>
   <section class="quiz">
-    <h3>⟡ توقّع قبل أن تجرّب</h3>
+    <h3>⟡ ${t('توقّع قبل أن تجرّب','Predict before you try')}</h3>
     <p class="q">${q.q}</p>
     <div class="opts">${q.options.map((o, k) => `<button class="opt" data-k="${k}"><b>${AR_LETTERS[k]}</b>${o}</button>`).join('')}</div>
     <div class="feedback" aria-live="polite"></div>
   </section>
   <div class="bottom">
     <div class="flapwrap">
-      <div class="under"><h4>لماذا؟</h4>${L.why}</div>
+      <div class="under"><h4>${t('لماذا؟','Why?')}</h4>${L.why}</div>
       <div class="flap ${picked === null ? 'locked' : 'unlocked'} ${st.flap ? 'open' : ''}">
         <div class="face front" role="button" tabindex="0">
           <b>${picked === null ? '🔒' : '☝'}</b>
-          <span>${picked === null ? 'اختر توقّعك أولاً' : 'لماذا؟ — ارفع اللسان'}</span>
-          <small>${picked === null ? 'اللسان الورقي مغلق' : 'المسه ليُفتح'}</small>
+          <span>${picked === null ? t('اختر توقّعك أولاً','Make a prediction first') : t('لماذا؟ — ارفع اللسان','Why? — lift the flap')}</span>
+          <small>${picked === null ? t('اللسان الورقي مغلق','The flap is locked') : t('المسه ليُفتح','Tap to open')}</small>
         </div>
-        <div class="face back">اللسان الورقي — اقرأ الشرح تحته</div>
+        <div class="face back">${t('اللسان الورقي — اقرأ الشرح تحته','Paper flap — read the answer beneath')}</div>
       </div>
     </div>
     <div class="stamp ${done ? 'inked' : ''}" title="ختم الإتمام">
-      <div class="ring"><div><span>${Math.min(st.touched.length, L.targets.length)}/${L.targets.length}</span><small>تفاعل مع كل عناصر المجسّم</small></div></div>
-      <div class="seal"><div>أتقنت<br>الدرس<em>${L.id}</em></div></div>
+      <div class="ring"><div><span>${Math.min(st.touched.length, L.targets.length)}/${L.targets.length}</span><small>${t('تفاعل مع كل عناصر المجسّم','Interact with every part of the model')}</small></div></div>
+      <div class="seal"><div>${t('أتقنت<br>الدرس','Lesson<br>mastered')}<em>${L.id}</em></div></div>
     </div>
   </div>`;
 }
@@ -81,13 +84,13 @@ function applyPick(L, k, quiet) {
   if (k !== L.quiz.answer) opts[L.quiz.answer].classList.add('reveal');
   const fb = pageRoot.querySelector('.feedback');
   fb.className = 'feedback ' + (k === L.quiz.answer ? 'ok' : 'no');
-  fb.textContent = k === L.quiz.answer ? '✓ توقّع صحيح! جرّب المجسّم لتتأكد بنفسك.' : '✗ ليس تماماً — ارفع اللسان لتعرف السبب، ثم جرّب المجسّم.';
+  fb.textContent = k === L.quiz.answer ? t('✓ توقّع صحيح! جرّب المجسّم لتتأكد بنفسك.','✓ Correct! Try the model to see for yourself.') : t('✗ ليس تماماً — ارفع اللسان لتعرف السبب، ثم جرّب المجسّم.','✗ Not quite — lift the flap to see why, then try the model.');
   const flap = pageRoot.querySelector('.flap');
   flap.classList.remove('locked'); flap.classList.add('unlocked');
   flap.querySelector('.front b').textContent = '☝';
-  flap.querySelector('.front span').textContent = 'لماذا؟ — ارفع اللسان';
-  flap.querySelector('.front small').textContent = 'المسه ليُفتح';
-  if (!quiet) { st.picked = k; persist(); toast('انفتح اللسان الورقي! المسه لترى «لماذا؟»'); }
+  flap.querySelector('.front span').textContent = t('لماذا؟ — ارفع اللسان','Why? — lift the flap');
+  flap.querySelector('.front small').textContent = t('المسه ليُفتح','Tap to open');
+  if (!quiet) { st.picked = k; persist(); toast(t('انفتح اللسان الورقي! المسه لترى «لماذا؟»','The flap is unlocked! Tap it to see “Why?”')); }
 }
 
 function bindPage(L) {
@@ -98,7 +101,7 @@ function bindPage(L) {
   }));
   const flap = pageRoot.querySelector('.flap');
   const toggle = () => {
-    if (flap.classList.contains('locked')) { toast('اختر توقّعك أولاً لتفتح اللسان 🔒'); return; }
+    if (flap.classList.contains('locked')) { toast(t('اختر توقّعك أولاً لتفتح اللسان 🔒','Make a prediction to unlock the flap 🔒')); return; }
     flap.classList.toggle('open');
     store(L.id).flap = flap.classList.contains('open'); persist();
   };
@@ -120,9 +123,9 @@ function makeCtx(L) {
       if (ring) ring.textContent = `${n}/${total}`;
       if (n >= total) {
         pageRoot.querySelector('.stamp')?.classList.add('inked');
-        toast('🎉 تم ختم الدرس! أتقنت كل عناصر المجسّم', 3200);
+        toast(t('🎉 تم ختم الدرس! أتقنت كل عناصر المجسّم','🎉 Lesson stamped! You explored every part.'), 3200);
         refreshDots();
-      } else toast(`✓ تفاعلت مع ${n} من ${total} عناصر`, 1600);
+      } else toast(`✓ ${n}/${total}`, 1600);
     },
   };
 }
@@ -205,8 +208,19 @@ cv.addEventListener('wheel', (e) => { e.preventDefault(); scene.zoom(e.deltaY); 
 addEventListener('resize', () => scene.resize());
 
 // ---------- أزرار التحكم ----------
-$('#modTitle').textContent = `الوحدة ${MODULE.num}: ${MODULE.title}`;
-$('#modQ').textContent = `السؤال الأساسي: ${MODULE.question}`;
+$('#modTitle').textContent = `${t('الوحدة','Module')} ${MODULE.num}: ${MODULE.title}`;
+$('#modQ').textContent = `${t('السؤال الأساسي','Essential question')}: ${MODULE.question}`;
+$('#prev').textContent = t('◀ السابق', '◀ Prev');
+$('#next').textContent = t('التالي ▶', 'Next ▶');
+$('#tocBtn').textContent = t('☰ الفهرس', '☰ Contents');
+$('#tocClose').textContent = t('إغلاق', 'Close');
+document.querySelector('[data-view=all]').textContent = t('الكتاب', 'Book');
+document.querySelector('[data-view=read]').textContent = t('اقرأ', 'Read');
+document.querySelector('[data-view=play]').textContent = t('جرّب', 'Play');
+document.title = t('كتاب الرياضيات المنبثق — النسب والمعدلات', 'Pop-up Math Book — Ratios and Rates');
+$('#loading').textContent = t('جاري فتح الكتاب…', 'Opening the book…');
+$('#langBtn').textContent = lang === 'en' ? 'عربي' : 'English';
+$('#langBtn').addEventListener('click', () => { location.href = `?lang=${lang === 'en' ? 'ar' : 'en'}#${LESSONS[cur]?.id || ''}`; });
 $('#prev').addEventListener('click', () => goTo(cur - 1));
 $('#next').addEventListener('click', () => goTo(cur + 1));
 document.querySelectorAll('[data-view]').forEach((b) => b.addEventListener('click', () => {
@@ -228,7 +242,7 @@ function refreshDots() {
     const done = store(L.id).touched.length >= L.targets.length;
     b.className = 'dot' + (i === cur ? ' cur' : '') + (done ? ' done' : '');
     b.title = `${L.id} ${L.title}`;
-    b.setAttribute('aria-label', `الدرس ${L.id}: ${L.title}`);
+    b.setAttribute('aria-label', `${t('الدرس','Lesson')} ${L.id}: ${L.title}`);
     b.addEventListener('click', () => goTo(i));
     dots.appendChild(b);
   });
@@ -237,13 +251,13 @@ function refreshDots() {
 }
 
 function openTOC() {
-  $('#tocTitle').textContent = `الوحدة ${MODULE.num}: ${MODULE.title}`;
+  $('#tocTitle').textContent = `${t('الوحدة','Module')} ${MODULE.num}: ${MODULE.title}`;
   const ol = $('#tocList');
   ol.innerHTML = '';
   LESSONS.forEach((L, i) => {
     const li = document.createElement('li');
     const done = store(L.id).touched.length >= L.targets.length;
-    li.innerHTML = `<button><b>${L.id}</b>${L.title}${done ? '<i>✓ مختوم</i>' : ''}</button>`;
+    li.innerHTML = `<button><b>${L.id}</b>${L.title}${done ? `<i>✓ ${t('مختوم', 'stamped')}</i>` : ''}</button>`;
     li.firstChild.addEventListener('click', () => { $('#toc').hidden = true; goTo(i); });
     ol.appendChild(li);
   });
@@ -267,7 +281,7 @@ async function boot() {
   requestAnimationFrame(loop);
   goTo(start, { instant: true });
   setTimeout(() => $('#loading').classList.add('gone'), 300);
-  toast('اسحب لتدوير الكتاب • عجلة الفأرة للتقريب • المس الشريط الأزرق للفهرس', 5000);
+  toast(t('اسحب لتدوير الكتاب • عجلة الفأرة للتقريب • المس الشريط الأزرق للفهرس','Drag to orbit • scroll to zoom • tap the blue ribbon for contents'), 5000);
 }
 boot();
 window.__book = { finish() { reveal = null; scene.model?.setReveal(1); }, scene, goTo, LESSONS, get cur() { return cur; } };

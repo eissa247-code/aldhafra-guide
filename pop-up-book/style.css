@@ -154,3 +154,13 @@ html, body { margin: 0; height: 100%; background: #2b2118; color: var(--ink); fo
 @media (prefers-reduced-motion: reduce) {
   .flap, .stamp .seal { transition-duration: .01s; } .flap.unlocked:not(.open) .face.front { animation: none; }
 }
+
+/* ===== النسخة الإنجليزية (LTR) ===== */
+html[dir=ltr] .page-root { direction: ltr; text-align: left; }
+html[dir=ltr] .page-root::after { right: auto; left: auto; right: 0; }
+html[dir=ltr] .pg-title { font-size: 42px; }
+html[dir=ltr] .pg-summary, html[dir=ltr] .quiz .q { line-height: 1.5; }
+html[dir=ltr] .toc-card li button { text-align: left; }
+.toprow { display: flex; gap: 6px; }
+html[dir=ltr] .hud.views { left: auto; right: 16px; top: 56px; direction: ltr; }
+html[dir=ltr] .brand { max-width: 48vw; }

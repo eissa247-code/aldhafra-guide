@@ -2,7 +2,7 @@
 
 كتاب ثلاثي الأبعاد مبني على *Reveal Math – Grade 6 – Volume 1 – الوحدة 1: النسب والمعدلات* (8 دروس).
 
-تشغيل محلي (لا يحتاج بناءً): `python3 -m http.server 8000` ثم افتح `http://localhost:8000/pop-up-book/`
+تشغيل محلي (لا يحتاج بناءً): `python3 -m http.server 8000` ثم افتح `http://localhost:8000/pop-up-book/` (عربي) أو `?lang=en` (English)
 (يمكن فتح درس مباشرة: `#1-4`).
 
 - `lessons.js` — المحتوى التعليمي (أضف وحدات/دروساً هنا).

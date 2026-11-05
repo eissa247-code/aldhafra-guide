@@ -1,6 +1,7 @@
 // book.js — الكتاب المفتوح على المكتب: الهندسة، الإضاءة، الكاميرا، قلب الصفحات
 import * as THREE from 'three';
 import { CSS3DRenderer, CSS3DObject } from './vendor/CSS3DRenderer.js';
+import { t } from './i18n.js';
 import { setInkResolution, rng, easeInOut } from './ink.js';
 
 export const PW = 6, PH = 8, STACK = 0.34, COVER = 0.14, BASE = COVER + STACK;
@@ -102,7 +103,7 @@ export function rightPageCanvas(lesson) {
   if (lesson) {
     x.fillStyle = 'rgba(29,39,53,0.6)'; x.textAlign = 'center';
     x.font = '700 36px "Aref Ruqaa", "Amiri", serif';
-    x.fillText(`الشكل ${lesson.id}`, 540, 1228);
+    x.fillText(`${t('الشكل','Figure')} ${lesson.id}`, 540, 1228);
     x.font = '400 28px "Amiri", serif';
     x.fillText(lesson.en, 540, 1262);
   }
