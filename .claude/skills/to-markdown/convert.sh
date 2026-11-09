@@ -7,7 +7,8 @@ out="${2:-${in%.*}.md}"
 venv="${TO_MARKDOWN_VENV:-$HOME/.cache/to-markdown}"
 if [ ! -x "$venv/bin/markitdown" ]; then
   python3 -m venv "$venv"
-  "$venv/bin/pip" install -q 'markitdown[all]'
+  "$venv/bin/pip" install -q 'markitdown[all]' python-bidi
 fi
 "$venv/bin/markitdown" "$in" -o "$out"
+"$venv/bin/python" -I "$(dirname "$0")/fix_arabic.py" "$out" || true
 echo "$out ($(wc -c < "$out") bytes)"
